@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screen_retriever/screen_retriever.dart';
+import 'package:vaccalendar_health_center_app/assets/files/firebase_options.dart';
 import 'package:vaccalendar_health_center_app/auth_check.dart';
 import 'package:vaccalendar_health_center_app/pages/app_navigation.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard.dart';
@@ -14,6 +15,8 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: OptionsFirebase().firebaseOptions);
 
   late Display display;
 
