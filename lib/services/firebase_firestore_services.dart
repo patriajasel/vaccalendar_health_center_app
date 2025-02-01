@@ -257,6 +257,35 @@ class FirebaseFirestoreServices {
     }
   }
 
+  // Checking if child already has the vaccine
+
+  Future<bool> checkIfVaccineTaken(String vaccineType, String childID) async {
+    try {
+      QuerySnapshot parent = await users.get();
+
+      for (var parent in parent.docs) {
+        QuerySnapshot child = await parent.reference
+            .collection('child')
+            .doc(childID)
+            .collection('vaccines')
+            .get();
+
+        for (var vaccine in child.docs) {
+          final vaccineData = vaccine.data() as Map<String, dynamic>;
+          final type = getVaccineField(vaccineType);
+          if (vaccineData[type] == 'Yes') {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
+    } catch (e) {
+      print("Error checking child's vaccine history");
+    }
+    return false;
+  }
+
   //* ************** *//
   //* END OF METHODS *//
   //* ************** *//

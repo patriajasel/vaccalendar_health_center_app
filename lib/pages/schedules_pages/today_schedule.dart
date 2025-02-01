@@ -32,6 +32,8 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
 
     final chilDData = ref.watch(childDataProvider);
 
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+
     List<ScheduleModel> todaysSchedules =
         getTodaysSchedules(ref.watch(scheduleDataProvider));
 
@@ -52,18 +54,36 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: screenHeight * 0.01,
-                  horizontal: screenWidth * 0.01),
-              child: Text(
-                "Today's Vaccine Schedules",
-                style: TextStyle(
-                    fontFamily: 'SourGummy',
-                    fontSize: 25,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.01,
+                      horizontal: screenWidth * 0.01),
+                  child: Text(
+                    "Today's Vaccine Schedules",
+                    style: TextStyle(
+                        fontFamily: 'SourGummy',
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.01,
+                      horizontal: screenWidth * 0.01),
+                  child: Text(
+                    currentDate,
+                    style: TextStyle(
+                      fontFamily: 'Hahmlet',
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
             ),
             Padding(
                 padding: EdgeInsets.symmetric(
