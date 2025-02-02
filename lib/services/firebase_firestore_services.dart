@@ -85,8 +85,6 @@ class FirebaseFirestoreServices {
       QuerySnapshot userDocs = await users.get();
 
       for (var doc in userDocs.docs) {
-        print("Document: ${doc.id}");
-
         final parentData = doc.data() as Map<String, dynamic>;
         QuerySnapshot childDocs = await doc.reference.collection('child').get();
 
@@ -261,7 +259,6 @@ class FirebaseFirestoreServices {
             (scheduleDate.year == currentDate.year &&
                 scheduleDate.month == currentDate.month &&
                 scheduleDate.day >= currentDate.day)) {
-          print(DateTime.now());
           ref.read(scheduleDataProvider.notifier).addSchedules(ScheduleModel(
                 schedID: sched.id,
                 childID: schedData['child_id'],
@@ -299,6 +296,8 @@ class FirebaseFirestoreServices {
           }
         }
       }
+
+      print("All Schedules Obtained");
     } catch (e, stacktrace) {
       print("Error getting all schedules: $e");
       print(stacktrace);

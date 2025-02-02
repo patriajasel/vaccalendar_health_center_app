@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
+import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 
 final screenWidthProvider = StateProvider<double>((ref) => 0);
 
@@ -28,6 +29,12 @@ final scheduleDataProvider = ChangeNotifierProvider<Schedules>(
   },
 );
 
+final workerDataProvider = ChangeNotifierProvider<Workers>(
+  (ref) {
+    return Workers([]);
+  },
+);
+
 final searchQuerySchedProvider = StateProvider<String>((ref) => '');
 final searchControllerSchedProvider = Provider((ref) {
   final controller = TextEditingController();
@@ -44,6 +51,13 @@ final searchControllerChildProvider = Provider((ref) {
 
 final searchQueryParentProvider = StateProvider<String>((ref) => '');
 final searchControllerParentProvider = Provider((ref) {
+  final controller = TextEditingController();
+  ref.onDispose(controller.dispose);
+  return controller;
+});
+
+final searchQueryWorkerProvider = StateProvider<String>((ref) => '');
+final searchControllerWorkerProvider = Provider((ref) {
   final controller = TextEditingController();
   ref.onDispose(controller.dispose);
   return controller;
