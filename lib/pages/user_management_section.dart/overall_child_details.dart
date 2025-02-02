@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
-class OverallScheduleRecords extends ConsumerWidget {
-  const OverallScheduleRecords({super.key});
+class OverallChildDetails extends ConsumerWidget {
+  const OverallChildDetails({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = ref.watch(screenWidthProvider);
     final screenHeight = ref.watch(screenHeightProvider);
-    final overallSchedules = ref.watch(scheduleDataProvider).schedules;
 
-    final searchQuery = ref.watch(searchQuerySchedProvider);
-    final searchController = ref.watch(searchControllerSchedProvider);
+    final searchQuery = ref.watch(searchQueryChildProvider);
+    final searchController = ref.watch(searchControllerChildProvider);
+
+    final usersData = ref.watch(userDataProvider).usersData;
+
+    List<ChildrenData> children = [];
+
+    for (var user in usersData) {
+      for (var child in user.children) {
+        children.add(child);
+      }
+    }
 
     if (searchController.text != searchQuery) {
       searchController.text = searchQuery;
@@ -23,17 +33,19 @@ class OverallScheduleRecords extends ConsumerWidget {
       );
     }
 
-    final filteredSchedules = overallSchedules.where((schedule) {
+    final filteredChildren = children.where((child) {
       final query = searchQuery.toLowerCase();
-      return schedule.schedID.toLowerCase().contains(query) ||
-          schedule.childName.toLowerCase().contains(query) ||
-          schedule.parent.toLowerCase().contains(query) ||
-          schedule.vaccineType.toLowerCase().contains(query) ||
+      return child.childID.toLowerCase().contains(query) ||
+          child.childName.toLowerCase().contains(query) ||
+          child.childAge.toLowerCase().contains(query) ||
+          child.childGender.toLowerCase().contains(query) ||
           DateFormat('MMMM dd, yyyy')
-              .format(schedule.schedDate)
+              .format(child.birthdate!)
               .toLowerCase()
               .contains(query) ||
-          schedule.schedStatus.toLowerCase().contains(query);
+          child.childWeight.toLowerCase().contains(query) ||
+          child.childHeight.toLowerCase().contains(query) ||
+          child.birthplace.toLowerCase().contains(query);
     }).toList();
 
     return Card(
@@ -60,7 +72,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                       vertical: screenHeight * 0.01,
                       horizontal: screenWidth * 0.01),
                   child: Text(
-                    "Overall Schedule Records",
+                    "Child Details",
                     style: TextStyle(
                         fontFamily: 'SourGummy',
                         fontSize: 30,
@@ -99,7 +111,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                     controller: searchController,
                     hintText: 'Search...',
                     onChanged: (value) => ref
-                        .read(searchQuerySchedProvider.notifier)
+                        .read(searchQueryChildProvider.notifier)
                         .state = value,
                     backgroundColor: WidgetStatePropertyAll(Colors.white),
                     elevation: WidgetStatePropertyAll(0),
@@ -140,25 +152,28 @@ class OverallScheduleRecords extends ConsumerWidget {
                       color: Colors.cyan[200],
                     ),
                     children: [
-                      DataTableCells().buildHeaderCell('Schedule ID'),
-                      DataTableCells().buildHeaderCell('Child'),
-                      DataTableCells().buildHeaderCell('Parent'),
-                      DataTableCells().buildHeaderCell('Vaccine Type'),
-                      DataTableCells().buildHeaderCell('Schedule Date'),
-                      DataTableCells().buildHeaderCell('Vaccine Status'),
+                      DataTableCells().buildHeaderCell('Child ID'),
+                      DataTableCells().buildHeaderCell('Name'),
+                      DataTableCells().buildHeaderCell('Age'),
+                      DataTableCells().buildHeaderCell('Gender'),
+                      DataTableCells().buildHeaderCell('Height'),
+                      DataTableCells().buildHeaderCell('Weight'),
+                      DataTableCells().buildHeaderCell('Birthdate'),
+                      DataTableCells().buildHeaderCell('Birthplace'),
                     ],
                   ),
                   // Data Rows
-                  ...filteredSchedules.map((schedule) {
+                  ...filteredChildren.map((child) {
                     return TableRow(children: [
-                      DataTableCells().buildDataCell(schedule.schedID),
-                      DataTableCells().buildDataCell(schedule.childName),
-                      DataTableCells().buildDataCell(schedule.parent),
-                      DataTableCells().buildDataCell(schedule.vaccineType),
+                      DataTableCells().buildDataCell(child.childID),
+                      DataTableCells().buildDataCell(child.childName),
+                      DataTableCells().buildDataCell(child.childAge),
+                      DataTableCells().buildDataCell(child.childGender),
+                      DataTableCells().buildDataCell(child.childHeight),
+                      DataTableCells().buildStatusCell(child.childWeight),
                       DataTableCells().buildDataCell(
-                        DateFormat('MMMM dd, yyyy').format(schedule.schedDate),
-                      ),
-                      DataTableCells().buildStatusCell(schedule.schedStatus),
+                          DateFormat('MMMM dd, yyyy').format(child.birthdate!)),
+                      DataTableCells().buildDataCell(child.birthplace),
                     ]);
                   })
                 ],

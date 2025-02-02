@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
-class OverallScheduleRecords extends ConsumerWidget {
-  const OverallScheduleRecords({super.key});
+class OverallParentDetails extends ConsumerWidget {
+  const OverallParentDetails({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = ref.watch(screenWidthProvider);
     final screenHeight = ref.watch(screenHeightProvider);
-    final overallSchedules = ref.watch(scheduleDataProvider).schedules;
 
-    final searchQuery = ref.watch(searchQuerySchedProvider);
-    final searchController = ref.watch(searchControllerSchedProvider);
+    final searchQuery = ref.watch(searchQueryParentProvider);
+    final searchController = ref.watch(searchControllerParentProvider);
+
+    final usersData = ref.watch(userDataProvider).usersData;
+
+    List<UserData> users = [];
+
+    for (var user in usersData) {
+      users.add(user);
+    }
 
     if (searchController.text != searchQuery) {
       searchController.text = searchQuery;
@@ -23,17 +30,15 @@ class OverallScheduleRecords extends ConsumerWidget {
       );
     }
 
-    final filteredSchedules = overallSchedules.where((schedule) {
+    final filteredChildren = users.where((users) {
       final query = searchQuery.toLowerCase();
-      return schedule.schedID.toLowerCase().contains(query) ||
-          schedule.childName.toLowerCase().contains(query) ||
-          schedule.parent.toLowerCase().contains(query) ||
-          schedule.vaccineType.toLowerCase().contains(query) ||
-          DateFormat('MMMM dd, yyyy')
-              .format(schedule.schedDate)
-              .toLowerCase()
-              .contains(query) ||
-          schedule.schedStatus.toLowerCase().contains(query);
+      return users.userID.toLowerCase().contains(query) ||
+          users.parentName.toLowerCase().contains(query) ||
+          users.parentAge.toString().toLowerCase().contains(query) ||
+          users.parentGender.toLowerCase().contains(query) ||
+          users.address.toLowerCase().contains(query) ||
+          users.email.toLowerCase().contains(query) ||
+          users.number.toLowerCase().contains(query);
     }).toList();
 
     return Card(
@@ -60,7 +65,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                       vertical: screenHeight * 0.01,
                       horizontal: screenWidth * 0.01),
                   child: Text(
-                    "Overall Schedule Records",
+                    "Parent Details",
                     style: TextStyle(
                         fontFamily: 'SourGummy',
                         fontSize: 30,
@@ -99,7 +104,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                     controller: searchController,
                     hintText: 'Search...',
                     onChanged: (value) => ref
-                        .read(searchQuerySchedProvider.notifier)
+                        .read(searchQueryParentProvider.notifier)
                         .state = value,
                     backgroundColor: WidgetStatePropertyAll(Colors.white),
                     elevation: WidgetStatePropertyAll(0),
@@ -140,25 +145,26 @@ class OverallScheduleRecords extends ConsumerWidget {
                       color: Colors.cyan[200],
                     ),
                     children: [
-                      DataTableCells().buildHeaderCell('Schedule ID'),
-                      DataTableCells().buildHeaderCell('Child'),
-                      DataTableCells().buildHeaderCell('Parent'),
-                      DataTableCells().buildHeaderCell('Vaccine Type'),
-                      DataTableCells().buildHeaderCell('Schedule Date'),
-                      DataTableCells().buildHeaderCell('Vaccine Status'),
+                      DataTableCells().buildHeaderCell('Parent ID'),
+                      DataTableCells().buildHeaderCell('Name'),
+                      DataTableCells().buildHeaderCell('Age'),
+                      DataTableCells().buildHeaderCell('Gender'),
+                      DataTableCells().buildHeaderCell('Address'),
+                      DataTableCells().buildHeaderCell('Email'),
+                      DataTableCells().buildHeaderCell('Contact Number'),
                     ],
                   ),
                   // Data Rows
-                  ...filteredSchedules.map((schedule) {
+                  ...filteredChildren.map((parent) {
                     return TableRow(children: [
-                      DataTableCells().buildDataCell(schedule.schedID),
-                      DataTableCells().buildDataCell(schedule.childName),
-                      DataTableCells().buildDataCell(schedule.parent),
-                      DataTableCells().buildDataCell(schedule.vaccineType),
-                      DataTableCells().buildDataCell(
-                        DateFormat('MMMM dd, yyyy').format(schedule.schedDate),
-                      ),
-                      DataTableCells().buildStatusCell(schedule.schedStatus),
+                      DataTableCells().buildDataCell(parent.userID),
+                      DataTableCells().buildDataCell(parent.parentName),
+                      DataTableCells()
+                          .buildDataCell(parent.parentAge.toString()),
+                      DataTableCells().buildDataCell(parent.parentGender),
+                      DataTableCells().buildDataCell(parent.address),
+                      DataTableCells().buildStatusCell(parent.email),
+                      DataTableCells().buildDataCell(parent.number),
                     ]);
                   })
                 ],
