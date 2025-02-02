@@ -182,191 +182,205 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
             Expanded(
                 child: Container(
               margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
-              child: ListView.builder(
-                  itemCount: todaysSchedules.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        List<String> childConditions = [];
+              child: todaysSchedules.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: todaysSchedules.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            List<String> childConditions = [];
 
-                        List<ChildModel> child = chilDData.children
-                            .where((child) =>
-                                child.childID == todaysSchedules[index].childID)
-                            .toList();
+                            List<ChildModel> child = chilDData.children
+                                .where((child) =>
+                                    child.childID ==
+                                    todaysSchedules[index].childID)
+                                .toList();
 
-                        if (child.isNotEmpty) {
-                          childConditions = child.first.childConditions;
-                        }
+                            if (child.isNotEmpty) {
+                              childConditions = child.first.childConditions;
+                            }
 
-                        showPopupScheduleInfo(
-                            context,
-                            ref,
-                            screenHeight,
-                            screenWidth,
-                            todaysSchedules[index].schedID,
-                            todaysSchedules[index].childID,
-                            todaysSchedules[index].childName,
-                            todaysSchedules[index].parent,
-                            todaysSchedules[index].vaccineType,
-                            todaysSchedules[index].schedStatus,
-                            todaysSchedules[index].schedDate,
-                            childConditions);
-                      },
-                      child: Card(
-                        elevation: 10,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            side: BorderSide(
-                              color: Colors.cyan,
-                              width: 2,
-                            )),
-                        child: SizedBox(
-                          height: screenHeight * 0.075,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                (index + 1).toString(),
-                                style: TextStyle(fontFamily: 'SourGummy'),
-                              ),
-                              VerticalDivider(),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Patient's ID",
-                                      style: TextStyle(
-                                        fontFamily: 'Hahmlet',
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            showPopupScheduleInfo(
+                                context,
+                                ref,
+                                screenHeight,
+                                screenWidth,
+                                todaysSchedules[index].schedID,
+                                todaysSchedules[index].childID,
+                                todaysSchedules[index].childName,
+                                todaysSchedules[index].parent,
+                                todaysSchedules[index].vaccineType,
+                                todaysSchedules[index].schedStatus,
+                                todaysSchedules[index].schedDate,
+                                childConditions);
+                          },
+                          child: Card(
+                            elevation: 10,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                side: BorderSide(
+                                  color: Colors.cyan,
+                                  width: 2,
+                                )),
+                            child: SizedBox(
+                              height: screenHeight * 0.075,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    (index + 1).toString(),
+                                    style: TextStyle(fontFamily: 'SourGummy'),
+                                  ),
+                                  VerticalDivider(),
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Patient's ID",
+                                          style: TextStyle(
+                                            fontFamily: 'Hahmlet',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          child: Text(
+                                            todaysSchedules[index].childID,
+                                            style: TextStyle(
+                                                fontSize: 12, letterSpacing: 2),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        todaysSchedules[index].childID,
-                                        style: TextStyle(
-                                            fontSize: 12, letterSpacing: 2),
-                                      ),
+                                  ),
+                                  VerticalDivider(),
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Child's Name",
+                                          style: TextStyle(
+                                            fontFamily: 'Hahmlet',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          child: Text(
+                                            todaysSchedules[index].childName,
+                                            style: TextStyle(
+                                                fontSize: 12, letterSpacing: 2),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Child's Name",
-                                      style: TextStyle(
-                                        fontFamily: 'Hahmlet',
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  ),
+                                  VerticalDivider(),
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Parent's Name",
+                                          style: TextStyle(
+                                            fontFamily: 'Hahmlet',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          child: Text(
+                                            todaysSchedules[index].parent,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                letterSpacing: 1,
+                                                fontSize: 12,
+                                                fontFamily: "Hahmlet"),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        todaysSchedules[index].childName,
-                                        style: TextStyle(
-                                            fontSize: 12, letterSpacing: 2),
-                                      ),
+                                  ),
+                                  VerticalDivider(),
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Vaccine Type",
+                                          style: TextStyle(
+                                            fontFamily: 'Hahmlet',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          child: Text(
+                                            todaysSchedules[index].vaccineType,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                fontSize: 12, letterSpacing: 2),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Parent's Name",
-                                      style: TextStyle(
-                                        fontFamily: 'Hahmlet',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        todaysSchedules[index].parent,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            letterSpacing: 1,
-                                            fontSize: 12,
-                                            fontFamily: "Hahmlet"),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Vaccine Type",
-                                      style: TextStyle(
-                                        fontFamily: 'Hahmlet',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        todaysSchedules[index].vaccineType,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontSize: 12, letterSpacing: 2),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Status",
-                                      style: TextStyle(
-                                        fontFamily: 'Hahmlet',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        todaysSchedules[index].schedStatus,
-                                        style: TextStyle(
-                                            color: todaysSchedules[index]
-                                                        .schedStatus ==
-                                                    "Pending"
-                                                ? Colors.yellowAccent.shade700
-                                                : todaysSchedules[index]
+                                  ),
+                                  VerticalDivider(),
+                                  Flexible(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Status",
+                                          style: TextStyle(
+                                            fontFamily: 'Hahmlet',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          child: Text(
+                                            todaysSchedules[index].schedStatus,
+                                            style: TextStyle(
+                                                color: todaysSchedules[index]
                                                             .schedStatus ==
-                                                        "Finished"
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                            fontSize: 12,
-                                            letterSpacing: 2),
-                                      ),
+                                                        "Pending"
+                                                    ? Colors
+                                                        .yellowAccent.shade700
+                                                    : todaysSchedules[index]
+                                                                .schedStatus ==
+                                                            "Finished"
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                fontSize: 12,
+                                                letterSpacing: 2),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
+                        );
+                      })
+                  : Center(
+                      child: Text(
+                        "No Schedules for today",
+                        style: TextStyle(
+                          fontFamily: 'Hahmlet',
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  }),
+                    ),
             )),
             SizedBox(height: screenHeight * 0.01),
           ],
