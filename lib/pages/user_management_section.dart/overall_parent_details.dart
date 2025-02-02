@@ -129,7 +129,10 @@ class OverallParentDetails extends ConsumerWidget {
                   vertical: screenHeight * 0.01,
                   horizontal: screenWidth * 0.01),
               child: Table(
-                border: TableBorder.all(), // Adds borders to the table
+                border: TableBorder.all(
+                    color: Colors.blueGrey,
+                    width: 2,
+                    borderRadius: BorderRadius.circular(10)),
                 columnWidths: {
                   0: FlexColumnWidth(1),
                   1: FlexColumnWidth(1),
@@ -142,8 +145,10 @@ class OverallParentDetails extends ConsumerWidget {
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(
-                      color: Colors.cyan[200],
-                    ),
+                        color: Colors.cyan[200],
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10))),
                     children: [
                       DataTableCells().buildHeaderCell('Parent ID'),
                       DataTableCells().buildHeaderCell('Name'),
