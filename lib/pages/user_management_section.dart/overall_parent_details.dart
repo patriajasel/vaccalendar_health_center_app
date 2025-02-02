@@ -30,7 +30,7 @@ class OverallParentDetails extends ConsumerWidget {
       );
     }
 
-    final filteredChildren = users.where((users) {
+    final filteredParent = users.where((users) {
       final query = searchQuery.toLowerCase();
       return users.userID.toLowerCase().contains(query) ||
           users.parentName.toLowerCase().contains(query) ||
@@ -160,7 +160,7 @@ class OverallParentDetails extends ConsumerWidget {
                     ],
                   ),
                   // Data Rows
-                  ...filteredChildren.map((parent) {
+                  ...filteredParent.map((parent) {
                     return TableRow(children: [
                       DataTableCells().buildDataCell(parent.userID),
                       DataTableCells().buildDataCell(parent.parentName),
