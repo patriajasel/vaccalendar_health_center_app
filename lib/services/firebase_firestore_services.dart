@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
+import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class FirebaseFirestoreServices {
@@ -16,6 +17,7 @@ class FirebaseFirestoreServices {
   Future<void> obtainAllNeededData(WidgetRef ref) async {
     await obtainAllChildData(ref);
     await obtainAllSchedules(ref);
+    await obtainAllUsers(ref);
   }
 
   //* ***********************************  *//
@@ -98,6 +100,131 @@ class FirebaseFirestoreServices {
               childConditions:
                   List<String>.from(childData['child_conditions'])));
         }
+      }
+    } catch (e, stacktrace) {
+      print("Error getting all child data: $e");
+      print(stacktrace);
+    }
+  }
+
+  Future<void> obtainAllUsers(WidgetRef ref) async {
+    Future.microtask(() {
+      ref.read(userDataProvider.notifier).reset();
+    });
+    try {
+      QuerySnapshot userDocs = await users.get();
+
+      for (var doc in userDocs.docs) {
+        final userID = doc.id;
+        final parentData = doc.data() as Map<String, dynamic>;
+
+        List<ChildrenData> children = [];
+
+        QuerySnapshot child = await doc.reference.collection('child').get();
+
+        for (var childDoc in child.docs) {
+          final childID = childDoc.id;
+          final childData = childDoc.data() as Map<String, dynamic>;
+
+          VaccineData? vaccines;
+
+          QuerySnapshot vaccine =
+              await childDoc.reference.collection('vaccines').get();
+
+          for (var vaccineDoc in vaccine.docs) {
+            final vaccineData = vaccineDoc.data() as Map<String, dynamic>;
+
+            vaccines = VaccineData(
+              bcgVaccine: vaccineData['bcg_vaccine'],
+              bcgDate: vaccineData['bcg_vaccine_date'] != null
+                  ? (vaccineData['bcg_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              hepaVaccine: vaccineData['hepatitisB_vaccine'],
+              hepaDate: vaccineData['hepatitisB_vaccine_date'] != null
+                  ? (vaccineData['hepatitisB_vaccine_date'] as Timestamp)
+                      .toDate()
+                  : null,
+              ipv1Vaccine: vaccineData['ipv1_vaccine'],
+              ipv1Date: vaccineData['ipv1_vaccine_date'] != null
+                  ? (vaccineData['ipv1_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              ipv2Vaccine: vaccineData['ipv2_vaccine'],
+              ipv2Date: vaccineData['ipv2_vaccine_date'] != null
+                  ? (vaccineData['ipv2_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              mmrVaccine: vaccineData['mmr_vaccine'],
+              mmrDate: vaccineData['mmr_vaccine_date'] != null
+                  ? (vaccineData['mmr_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              opv1Vaccine: vaccineData['opv1_vaccine'],
+              opv1Date: vaccineData['opv1_vaccine_date'] != null
+                  ? (vaccineData['opv1_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              opv2Vaccine: vaccineData['opv2_vaccine'],
+              opv2Date: vaccineData['opv2_vaccine_date'] != null
+                  ? (vaccineData['opv2_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              opv3Vaccine: vaccineData['opv3_vaccine'],
+              opv3Date: vaccineData['opv3_vaccine_date'] != null
+                  ? (vaccineData['opv3_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              pcv1Vaccine: vaccineData['pcv1_vaccine'],
+              pcv1Date: vaccineData['pcv1_vaccine_date'] != null
+                  ? (vaccineData['pcv1_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              pcv2Vaccine: vaccineData['pcv2_vaccine'],
+              pcv2Date: vaccineData['pcv2_vaccine_date'] != null
+                  ? (vaccineData['pcv2_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              pcv3Vaccine: vaccineData['pcv3_vaccine'],
+              pcv3Date: vaccineData['pcv3_vaccine_date'] != null
+                  ? (vaccineData['pcv3_vaccine_date'] as Timestamp).toDate()
+                  : null,
+              penta1Vaccine: vaccineData['pentavalent1_vaccine'],
+              penta1Date: vaccineData['pentavalent1_vaccine_date'] != null
+                  ? (vaccineData['pentavalent1_vaccine_date'] as Timestamp)
+                      .toDate()
+                  : null,
+              penta2Vaccine: vaccineData['pentavalent2_vaccine'],
+              penta2Date: vaccineData['pentavalent2_vaccine_date'] != null
+                  ? (vaccineData['pentavalent2_vaccine_date'] as Timestamp)
+                      .toDate()
+                  : null,
+              penta3Vaccine: vaccineData['pentavalent3_vaccine'],
+              penta3Date: vaccineData['pentavalent3_vaccine_date'] != null
+                  ? (vaccineData['pentavalent3_vaccine_date'] as Timestamp)
+                      .toDate()
+                  : null,
+            );
+          }
+
+          children.add(ChildrenData(
+              childID: childID,
+              childName: childData['child_nickname'],
+              facilityNumber: childData['facility_number'],
+              childAge: childData['child_age'].toString(),
+              childGender: childData['child_gender'],
+              birthdate: (childData['child_birthdate'] as Timestamp).toDate(),
+              birthplace: childData['child_birthplace'],
+              childHeight: childData['child_height'].toString(),
+              childWeight: childData['child_weight'].toString(),
+              childConditions: (childData['child_conditions'] as List<dynamic>)
+                  .cast<String>(),
+              vaccines: vaccines));
+        }
+
+        final userData = UserData(
+            userID: userID,
+            parentName:
+                '${parentData['guardian_firstName']} ${parentData['guardian_middleName']} ${parentData['guardian_surname']}',
+            parentAge: parentData['guardian_age'],
+            parentGender: parentData['guardian_gender'],
+            email: parentData['guardian_email'],
+            number: parentData['guardian_contact'],
+            address: parentData['guardian_address'],
+            children: children);
+
+        ref.read(userDataProvider.notifier).addUsers(userData);
       }
     } catch (e, stacktrace) {
       print("Error getting all child data: $e");
