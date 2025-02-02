@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/pages/dialog_popups/register_new_child.dart';
-import 'package:vaccalendar_health_center_app/pages/user_management_section.dart/overall_child_details.dart';
-import 'package:vaccalendar_health_center_app/pages/user_management_section.dart/overall_parent_details.dart';
+import 'package:vaccalendar_health_center_app/pages/user_management_section/overall_child_details.dart';
+import 'package:vaccalendar_health_center_app/pages/user_management_section/overall_parent_details.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class UserManagement extends ConsumerStatefulWidget {

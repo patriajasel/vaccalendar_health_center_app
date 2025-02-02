@@ -121,7 +121,7 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                       case 3:
                         return SchedulePage();
                       case 4:
-                        return Vaccines();
+                        return VaccinesManagement();
                       default:
                         return Center(
                           child: Text("Exceeded the navigation"),

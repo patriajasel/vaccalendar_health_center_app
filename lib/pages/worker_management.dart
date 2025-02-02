@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vaccalendar_health_center_app/pages/worker_management_section.dart/overall_worker_details.dart';
+import 'package:vaccalendar_health_center_app/pages/worker_management_section/overall_worker_details.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class WorkerManagement extends ConsumerStatefulWidget {

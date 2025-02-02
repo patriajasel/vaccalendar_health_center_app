@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/pages/dialog_popups/set_schedule_dialog.dart';
-import 'package:vaccalendar_health_center_app/pages/schedules_pages/overall_chart.dart';
-import 'package:vaccalendar_health_center_app/pages/schedules_pages/overall_schedule_records.dart';
-import 'package:vaccalendar_health_center_app/pages/schedules_pages/today_schedule.dart';
+import 'package:vaccalendar_health_center_app/pages/schedules_section/overall_chart.dart';
+import 'package:vaccalendar_health_center_app/pages/schedules_section/overall_schedule_records.dart';
+import 'package:vaccalendar_health_center_app/pages/schedules_section/today_schedule.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class SchedulePage extends ConsumerStatefulWidget {
