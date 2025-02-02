@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
@@ -417,6 +418,126 @@ class FirebaseFirestoreServices {
   //* END OF METHODS *//
   //* ************** *//
 
+  //* *******************************  *//
+  //* FOR ADDING NEW CHILD PURPOSES    *//
+  //* *******************************  *//
+
+  Future<void> registerNewChild(String userID, String childID,
+      Map<String, TextEditingController> controllers) async {
+    try {
+      List<String> childConditions =
+          separateChildConditions(controllers['childConditions']!.text);
+
+      Map<String, dynamic> childInfo = {
+        'child_nickname': controllers['childName']!.text,
+        'facility_number': controllers['facilityNumber']!.text,
+        'child_age': controllers['childAge']!.text,
+        'child_gender': controllers['childGender']!.text,
+        'child_birthdate': controllers['birthdate']!.text,
+        'child_birthplace': controllers['birthplace']!.text,
+        'child_height': controllers['childHeight']!.text,
+        'child_weight': controllers['childWeight']!.text,
+        'child_conditions': childConditions.toList(),
+        'image_url': ''
+      };
+
+      Map<String, dynamic> vaccineInfo = {
+        'bcg_vaccine':
+            controllers['BCG VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'bcg_vaccine_date': controllers['BCG VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['BCG VaccineDate']!.text),
+        'hepatitisB_vaccine':
+            controllers['Hepatitis B VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'hepatitisB_vaccine_date':
+            controllers['Hepatitis B VaccineDate']!.text == ''
+                ? null
+                : DateTime.parse(controllers['Hepatitis B VaccineDate']!.text),
+        'ipv1_vaccine':
+            controllers['IPV1 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'ipv1_vaccine_date': controllers['IPV1 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['IPV1 VaccineDate']!.text),
+        'ipv2_vaccine':
+            controllers['IPV2 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'ipv2_vaccine_date': controllers['IPV2 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['IPV2 VaccineDate']!.text),
+        'mmr_vaccine':
+            controllers['MMR VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'mmr_vaccine_date': controllers['MMR VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['MMR VaccineDate']!.text),
+        'opv1_vaccine':
+            controllers['OPV1 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'opv1_vaccine_date': controllers['OPV1 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['OPV1 VaccineDate']!.text),
+        'opv2_vaccine':
+            controllers['OPV2 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'opv2_vaccine_date': controllers['OPV2 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['OPV2 VaccineDate']!.text),
+        'opv3_vaccine':
+            controllers['OPV3 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'opv3_vaccine_date': controllers['OPV3 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['OPV3 VaccineDate']!.text),
+        'pcv1_vaccine':
+            controllers['PCV1 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pcv1_vaccine_date': controllers['PCV1 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['PCV1 VaccineDate']!.text),
+        'pcv2_vaccine':
+            controllers['PCV2 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pcv2_vaccine_date': controllers['PCV2 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['PCV2 VaccineDate']!.text),
+        'pcv3_vaccine':
+            controllers['PCV3 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pcv3_vaccine_date': controllers['PCV3 VaccineDate']!.text == ''
+            ? null
+            : DateTime.parse(controllers['PCV3 VaccineDate']!.text),
+        'pentavalent1_vaccine':
+            controllers['Pentavalent 1 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pentavalent1_vaccine_date': controllers['Pentavalent 1 VaccineDate']!
+                    .text ==
+                ''
+            ? null
+            : DateTime.parse(controllers['Pentavalent 1 VaccineDate']!.text),
+        'pentavalent2_vaccine':
+            controllers['Pentavalent 2 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pentavalent2_vaccine_date': controllers['Pentavalent 2 VaccineDate']!
+                    .text ==
+                ''
+            ? null
+            : DateTime.parse(controllers['Pentavalent 2 VaccineDate']!.text),
+        'pentavalent3_vaccine':
+            controllers['Pentavalent 3 VaccineDate']!.text == '' ? 'No' : 'Yes',
+        'pentavalent3_vaccine_date': controllers['Pentavalent 3 VaccineDate']!
+                    .text ==
+                ''
+            ? null
+            : DateTime.parse(controllers['Pentavalent 3 VaccineDate']!.text),
+      };
+
+      await users.doc(userID).collection('child').doc(childID).set(childInfo);
+
+      await users
+          .doc(userID)
+          .collection('child')
+          .doc(childID)
+          .collection('vaccines')
+          .add(vaccineInfo);
+    } catch (e) {
+      print("Error adding new child: $e");
+    }
+  }
+
+  //* ************** *//
+  //* END OF METHODS *//
+  //* ************** *//
+
   //* *************  *//
   //* OTHER METHODS  *//
   //* *************  *//
@@ -489,6 +610,11 @@ class FirebaseFirestoreServices {
       default:
         return 'vaccine-not-exist';
     }
+  }
+
+  List<String> separateChildConditions(String childConditions) {
+    List<String> conditions = childConditions.replaceAll(' ', '').split(',');
+    return conditions;
   }
 
   //* ************** *//
