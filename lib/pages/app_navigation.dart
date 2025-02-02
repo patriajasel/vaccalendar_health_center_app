@@ -100,7 +100,7 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
               ),
               items: [
                 SidebarXItem(icon: Icons.insert_chart, label: 'Dashboard'),
-                SidebarXItem(icon: Icons.person, label: 'User Management'),
+                SidebarXItem(icon: Icons.person, label: 'Patient\'s Data'),
                 SidebarXItem(icon: Icons.masks, label: 'Worker Management'),
                 SidebarXItem(icon: Icons.calendar_month, label: 'Schedules'),
                 SidebarXItem(icon: Icons.vaccines, label: 'Vaccines')
