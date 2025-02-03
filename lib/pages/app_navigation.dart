@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -102,6 +103,20 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                 SidebarXItem(icon: Icons.person, label: 'Patient\'s Data'),
                 SidebarXItem(icon: Icons.masks, label: 'Worker Management'),
                 SidebarXItem(icon: Icons.calendar_month, label: 'Schedules'),
+              ],
+              footerItems: [
+                SidebarXItem(
+                  icon: Icons.logout,
+                  label: 'Logout',
+                  onTap: () async {
+                    ref.read(childDataProvider.notifier).reset();
+                    ref.read(scheduleDataProvider.notifier).reset();
+                    ref.read(userDataProvider.notifier).reset();
+                    ref.read(vaccineDataProvider.notifier).reset();
+                    ref.read(workerDataProvider.notifier).reset();
+                    await FirebaseAuth.instance.signOut();
+                  },
+                )
               ],
             ),
             Expanded(
