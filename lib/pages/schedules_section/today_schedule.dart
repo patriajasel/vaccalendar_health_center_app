@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
+import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
 import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
@@ -31,6 +34,7 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
     final screenHeight = ref.watch(screenHeightProvider);
 
     final chilDData = ref.watch(childDataProvider);
+    final vaccineData = ref.watch(vaccineDataProvider).vaccines;
 
     final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
@@ -212,7 +216,8 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                                 todaysSchedules[index].vaccineType,
                                 todaysSchedules[index].schedStatus,
                                 todaysSchedules[index].schedDate,
-                                childConditions);
+                                childConditions,
+                                vaccineData);
                           },
                           child: Card(
                             elevation: 10,
@@ -436,7 +441,8 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
       String vaccineType,
       String vaccineStatus,
       DateTime schedDate,
-      List<String> conditions) {
+      List<String> conditions,
+      List<VaccineModel> vaccineData) {
     const leading = TextStyle(
         fontFamily: "Hahmlet",
         fontSize: 16,
@@ -533,17 +539,33 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           onPressed: () async {
-                            await FirebaseFirestoreServices()
-                                .updateScheduleStatus(scheduleID, 'Finished');
-                            await FirebaseFirestoreServices()
-                                .obtainAllSchedules(ref);
+                            final vaccineName = getVaccineName(vaccineType);
 
-                            await FirebaseFirestoreServices()
-                                .updateChildVaccineDetails(childID, "Yes",
-                                    DateTime.now(), vaccineType);
+                            final vaccine = vaccineData.where((vaccine) =>
+                                vaccine.vaccineName == vaccineName);
 
-                            if (context.mounted) {
-                              Navigator.pop(context);
+                            if (vaccine.first.stockCount == 0) {
+                              showTopSnackBar(
+                                  Overlay.of(context),
+                                  CustomSnackBar.error(
+                                      message:
+                                          "$vaccineName vaccine stock is empty. Cannot proceed with updating schedule"));
+                            } else {
+                              await FirebaseFirestoreServices()
+                                  .updateScheduleStatus(scheduleID, 'Finished');
+                              await FirebaseFirestoreServices()
+                                  .obtainAllSchedules(ref);
+
+                              await FirebaseFirestoreServices()
+                                  .updateChildVaccineDetails(childID, "Yes",
+                                      DateTime.now(), vaccineType);
+
+                              await FirebaseFirestoreServices()
+                                  .updateVaccineInventory(vaccineName,
+                                      vaccine.first.stockCount - 1, ref);
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
                             }
                           },
                           child: Padding(
@@ -592,5 +614,22 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
             ),
           );
         });
+  }
+
+  String getVaccineName(String vaccineType) {
+    switch (vaccineType) {
+      case 'IPV1' || 'IPV2':
+        return 'IPV';
+      case 'OPV1' || 'OPV2' || 'OPV3':
+        return 'OPV';
+      case 'PCV1' || 'PCV2' || 'PCV3':
+        return 'PCV';
+      case 'Pentavalent 1st Dose' ||
+            'Pentavalent 2nd Dose' ||
+            'Pentavalent 3rd Dose':
+        return 'Pentavalent';
+      default:
+        return vaccineType;
+    }
   }
 }

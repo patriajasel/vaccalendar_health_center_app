@@ -4,6 +4,7 @@ import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
+import 'package:vaccalendar_health_center_app/models/vaccine_usage_logs.dart';
 import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 
 final screenWidthProvider = StateProvider<double>((ref) => 0);
@@ -39,6 +40,12 @@ final workerDataProvider = ChangeNotifierProvider<Workers>(
 final vaccineDataProvider = ChangeNotifierProvider<VaccineDetails>(
   (ref) {
     return VaccineDetails([]);
+  },
+);
+
+final vaccineLogsProvider = ChangeNotifierProvider<VaccineUsageLogs>(
+  (ref) {
+    return VaccineUsageLogs([]);
   },
 );
 

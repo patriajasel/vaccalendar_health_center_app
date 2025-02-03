@@ -15,10 +15,12 @@ class VaccineInventory extends ConsumerStatefulWidget {
 
 class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
   final stockNumber = TextEditingController();
+  final scrollController = ScrollController();
 
   @override
   void dispose() {
     stockNumber.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -26,17 +28,6 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
   Widget build(BuildContext context) {
     final screenWidth = ref.watch(screenWidthProvider);
     final screenHeight = ref.watch(screenHeightProvider);
-
-    List<String> vaccineImages = [
-      'lib/assets/images/vaccines/opv_vaccine.jpg',
-      'lib/assets/images/vaccines/pcv_vaccine.jpg',
-      'lib/assets/images/vaccines/ipv_vaccine.jpg',
-      'lib/assets/images/vaccines/bcg_vaccine.jpg',
-      'lib/assets/images/vaccines/pentavalent_vaccine.jpg',
-      'lib/assets/images/vaccines/mmr_vaccine.jpg',
-      'lib/assets/images/vaccines/hepatitis_b_vaccine.jpg',
-    ];
-
     final vaccineData = ref.watch(vaccineDataProvider).vaccines;
 
     return Card(
@@ -49,7 +40,7 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
             width: 2,
           )),
       child: SizedBox(
-        height: screenHeight * 0.6,
+        height: screenHeight * 0.3,
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -60,7 +51,7 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
                   vertical: screenHeight * 0.01,
                   horizontal: screenWidth * 0.01),
               child: Text(
-                "Vaccine Inventory",
+                "Available Vaccines",
                 style: TextStyle(
                     fontFamily: 'SourGummy',
                     fontSize: 30,
@@ -77,74 +68,77 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
                   thickness: 2,
                 )),
             Expanded(
-                child: ListView.builder(
-                    itemCount: vaccineData.length,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.01,
-                        ),
-                        child: SizedBox(
-                          height: screenHeight * 0.1,
-                          child: Card(
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
-                                side: BorderSide(
-                                  color: Colors.cyan,
-                                  width: 2,
-                                )),
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.cyan, width: 2),
-                                      borderRadius: BorderRadius.circular(15)),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: screenWidth * 0.01,
-                                      vertical: screenHeight * 0.01),
-                                  child: ClipRRect(
-                                    clipBehavior: Clip.antiAlias,
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.asset(
-                                      fit: BoxFit.cover,
-                                      vaccineImages[index],
-                                    ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: screenWidth * 0.01),
+                  Expanded(
+                    child: Scrollbar(
+                      controller: scrollController,
+                      child: ListView.builder(
+                          controller: scrollController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: vaccineData.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.005,
+                                  vertical: screenHeight * 0.01),
+                              height: screenHeight * 0.15,
+                              width: screenWidth * 0.1,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: vaccineData[index].stockCount <
+                                                100 &&
+                                            vaccineData[index].stockCount > 50
+                                        ? Colors.amber
+                                        : vaccineData[index].stockCount < 50
+                                            ? Colors.red
+                                            : Colors.cyan,
+                                    width: 2,
                                   ),
-                                ),
-                                SizedBox(width: screenWidth * 0.01),
-                                Expanded(
-                                    child: ListTile(
-                                  title: Text(
-                                    "${vaccineData[index].vaccineName} Vaccine",
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.vaccines,
+                                    color: vaccineData[index].stockCount <
+                                                100 &&
+                                            vaccineData[index].stockCount > 50
+                                        ? Colors.amber
+                                        : vaccineData[index].stockCount < 50
+                                            ? Colors.red
+                                            : Colors.green,
+                                    size: 40,
+                                  ),
+                                  Text(
+                                    vaccineData[index].vaccineName,
                                     style: TextStyle(
                                         fontFamily: 'Hahmlet',
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),
                                   ),
-                                  trailing: Text(
-                                    "Number of Stock: ${vaccineData[index].stockCount}",
+                                  Text(
+                                    'Stock: ${vaccineData[index].stockCount} Bottles',
                                     style: TextStyle(
                                         fontFamily: 'SourGummy',
-                                        fontSize: 16,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blueGrey),
                                   ),
-                                )),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: screenWidth * 0.01),
-                                  child: Row(
+                                  SizedBox(
+                                    height: screenWidth * 0.01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       IconButton(
                                           style: IconButton.styleFrom(
-                                              backgroundColor: Colors.green,
-                                              elevation: 10),
+                                              backgroundColor: Colors.green),
                                           onPressed: () {
                                             showAddRemoveDialog(
                                                 'Add',
@@ -162,11 +156,10 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
                                         width: screenWidth * 0.01,
                                       ),
                                       IconButton(
-                                          style: IconButton.styleFrom(
-                                              disabledBackgroundColor:
-                                                  Colors.grey,
+                                          style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.red,
-                                              elevation: 10),
+                                              disabledBackgroundColor:
+                                                  Colors.grey),
                                           onPressed:
                                               vaccineData[index].stockCount == 0
                                                   ? null
@@ -182,18 +175,22 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
                                                           screenWidth);
                                                     },
                                           icon: Icon(
-                                            Icons.delete,
+                                            Icons.remove,
                                             color: Colors.white,
+                                            size: 10,
                                           ))
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    })),
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth * 0.01),
+                ],
+              ),
+            ),
             SizedBox(
               height: screenHeight * 0.015,
             )

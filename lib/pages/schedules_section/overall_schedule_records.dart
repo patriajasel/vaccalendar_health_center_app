@@ -119,55 +119,61 @@ class OverallScheduleRecords extends ConsumerWidget {
                   color: Colors.black,
                   thickness: 2,
                 )),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: screenHeight * 0.01,
-                  horizontal: screenWidth * 0.01),
-              child: Table(
-                border: TableBorder.all(
-                    color: Colors.blueGrey,
-                    width: 2,
-                    borderRadius:
-                        BorderRadius.circular(10)), // Adds borders to the table
-                columnWidths: {
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(1),
-                  2: FlexColumnWidth(1),
-                  3: FlexColumnWidth(1),
-                  4: FlexColumnWidth(1),
-                  5: FlexColumnWidth(1),
-                },
-                children: [
-                  // Header Row
-                  TableRow(
-                    decoration: BoxDecoration(
-                        color: Colors.cyan[200],
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10))),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.01,
+                      horizontal: screenWidth * 0.01),
+                  child: Table(
+                    border: TableBorder.all(
+                        color: Colors.blueGrey,
+                        width: 2,
+                        borderRadius: BorderRadius.circular(
+                            10)), // Adds borders to the table
+                    columnWidths: {
+                      0: FlexColumnWidth(1),
+                      1: FlexColumnWidth(1),
+                      2: FlexColumnWidth(1),
+                      3: FlexColumnWidth(1),
+                      4: FlexColumnWidth(1),
+                      5: FlexColumnWidth(1),
+                    },
                     children: [
-                      DataTableCells().buildHeaderCell('Schedule ID'),
-                      DataTableCells().buildHeaderCell('Child'),
-                      DataTableCells().buildHeaderCell('Parent'),
-                      DataTableCells().buildHeaderCell('Vaccine Type'),
-                      DataTableCells().buildHeaderCell('Schedule Date'),
-                      DataTableCells().buildHeaderCell('Vaccine Status'),
+                      // Header Row
+                      TableRow(
+                        decoration: BoxDecoration(
+                            color: Colors.cyan[200],
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10))),
+                        children: [
+                          DataTableCells().buildHeaderCell('Schedule ID'),
+                          DataTableCells().buildHeaderCell('Child'),
+                          DataTableCells().buildHeaderCell('Parent'),
+                          DataTableCells().buildHeaderCell('Vaccine Type'),
+                          DataTableCells().buildHeaderCell('Schedule Date'),
+                          DataTableCells().buildHeaderCell('Vaccine Status'),
+                        ],
+                      ),
+                      // Data Rows
+                      ...filteredSchedules.map((schedule) {
+                        return TableRow(children: [
+                          DataTableCells().buildDataCell(schedule.schedID),
+                          DataTableCells().buildDataCell(schedule.childName),
+                          DataTableCells().buildDataCell(schedule.parent),
+                          DataTableCells().buildDataCell(schedule.vaccineType),
+                          DataTableCells().buildDataCell(
+                            DateFormat('MMMM dd, yyyy')
+                                .format(schedule.schedDate),
+                          ),
+                          DataTableCells()
+                              .buildStatusCell(schedule.schedStatus),
+                        ]);
+                      })
                     ],
                   ),
-                  // Data Rows
-                  ...filteredSchedules.map((schedule) {
-                    return TableRow(children: [
-                      DataTableCells().buildDataCell(schedule.schedID),
-                      DataTableCells().buildDataCell(schedule.childName),
-                      DataTableCells().buildDataCell(schedule.parent),
-                      DataTableCells().buildDataCell(schedule.vaccineType),
-                      DataTableCells().buildDataCell(
-                        DateFormat('MMMM dd, yyyy').format(schedule.schedDate),
-                      ),
-                      DataTableCells().buildStatusCell(schedule.schedStatus),
-                    ]);
-                  })
-                ],
+                ),
               ),
             ),
             SizedBox(height: screenHeight * 0.01),
