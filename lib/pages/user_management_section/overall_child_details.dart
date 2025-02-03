@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
+import 'package:vaccalendar_health_center_app/pages/dialog_popups/view_vaccines_taken.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
@@ -166,6 +167,7 @@ class OverallChildDetails extends ConsumerWidget {
                       DataTableCells().buildHeaderCell('Weight'),
                       DataTableCells().buildHeaderCell('Birthdate'),
                       DataTableCells().buildHeaderCell('Birthplace'),
+                      DataTableCells().buildHeaderCell('Vaccines Taken'),
                     ],
                   ),
                   // Data Rows
@@ -180,6 +182,35 @@ class OverallChildDetails extends ConsumerWidget {
                       DataTableCells().buildDataCell(
                           DateFormat('MMMM dd, yyyy').format(child.birthdate!)),
                       DataTableCells().buildDataCell(child.birthplace),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.01,
+                            vertical: screenHeight * 0.01),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.cyan,
+                                foregroundColor: Colors.white),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => ViewVaccinesTaken(
+                                      vaccinesTaken: child.vaccines));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.visibility,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  "View",
+                                  style: TextStyle(fontFamily: 'SourGummy'),
+                                )
+                              ],
+                            )),
+                      )
                     ]);
                   })
                 ],

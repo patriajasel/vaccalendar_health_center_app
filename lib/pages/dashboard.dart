@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard_section/vaccine_completion_rate.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_section/overall_schedule_records.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_section/today_schedule.dart';
-import 'package:vaccalendar_health_center_app/pages/vaccine_section/vaccine_inventory.dart';
+import 'package:vaccalendar_health_center_app/pages/dashboard_section/vaccine_inventory.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class Dashboard extends ConsumerStatefulWidget {

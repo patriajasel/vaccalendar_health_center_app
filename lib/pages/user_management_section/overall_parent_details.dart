@@ -74,27 +74,6 @@ class OverallParentDetails extends ConsumerWidget {
                   ),
                 ),
                 Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(top: screenHeight * 0.01),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          fixedSize:
-                              Size(screenWidth * 0.1, screenHeight * 0.035),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.description, color: Colors.white),
-                          SizedBox(width: 1),
-                          Text('Export to Excel'),
-                        ],
-                      )),
-                ),
                 Container(
                   margin: EdgeInsets.only(top: screenHeight * 0.01),
                   height: screenHeight * 0.035,
