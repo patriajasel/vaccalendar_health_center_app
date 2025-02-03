@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
+import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
 import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 
 final screenWidthProvider = StateProvider<double>((ref) => 0);
@@ -32,6 +33,12 @@ final scheduleDataProvider = ChangeNotifierProvider<Schedules>(
 final workerDataProvider = ChangeNotifierProvider<Workers>(
   (ref) {
     return Workers([]);
+  },
+);
+
+final vaccineDataProvider = ChangeNotifierProvider<VaccineDetails>(
+  (ref) {
+    return VaccineDetails([]);
   },
 );
 

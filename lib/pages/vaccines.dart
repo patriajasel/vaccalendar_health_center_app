@@ -67,15 +67,12 @@ class _VaccinesManagementState extends ConsumerState<VaccinesManagement> {
                       children: [
                         // Today's Schedule Section
                         Expanded(child: VaccineInventory()),
-                        SizedBox(width: screenWidth * 0.025),
-                        // Overall Schedules Percent
-                        Expanded(child: VaccineInventory())
                       ],
                     ),
                   ),
                 ],
               ),
-            ))
+            )),
           ],
         ),
       ),

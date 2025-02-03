@@ -9,16 +9,19 @@ import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
+import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class FirebaseFirestoreServices {
   final users = FirebaseFirestore.instance.collection('users');
   final schedules = FirebaseFirestore.instance.collection('schedules');
+  final vaccines = FirebaseFirestore.instance.collection('vaccines');
 
   Future<void> obtainAllNeededData(WidgetRef ref) async {
     await obtainAllChildData(ref);
     await obtainAllSchedules(ref);
     await obtainAllUsers(ref);
+    await obtainVaccineData(ref);
   }
 
   //* ***********************************  *//
@@ -614,6 +617,56 @@ class FirebaseFirestoreServices {
   List<String> separateChildConditions(String childConditions) {
     List<String> conditions = childConditions.replaceAll(' ', '').split(',');
     return conditions;
+  }
+
+  //* ************** *//
+  //* END OF METHODS *//
+  //* ************** *//
+
+  //* ************************  *//
+  //* METHODS FOR VACCINE DATA  *//
+  //* ************************  *//
+
+  Future<void> obtainVaccineData(WidgetRef ref) async {
+    Future.microtask(() {
+      ref.read(vaccineDataProvider.notifier).reset();
+    });
+
+    try {
+      QuerySnapshot vaccineQuery = await vaccines.get();
+
+      for (var vaccine in vaccineQuery.docs) {
+        final data = vaccine.data() as Map<String, dynamic>;
+        ref.read(vaccineDataProvider).addVaccines(
+            VaccineModel(data['vaccine_type'], data['vaccine_stock']));
+      }
+
+      print("Vaccine Data Obtained");
+    } catch (e) {
+      print("Error getting vaccine data: $e");
+    }
+  }
+
+  Future<void> updateVaccineInventory(
+      String vaccineName, int stockNumber, WidgetRef ref) async {
+    try {
+      QuerySnapshot query = await vaccines
+          .where('vaccine_type', isEqualTo: vaccineName)
+          .limit(1)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        String docId = query.docs.first.id;
+
+        await vaccines.doc(docId).update({'vaccine_stock': stockNumber});
+
+        print("Vaccine inventory updated");
+      }
+
+      obtainVaccineData(ref);
+    } catch (e) {
+      print("Error updating vaccine storage");
+    }
   }
 
   //* ************** *//

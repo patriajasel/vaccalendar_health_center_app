@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class VaccineData extends ChangeNotifier {
+class VaccineDetails extends ChangeNotifier {
   List<VaccineModel> vaccines;
 
-  VaccineData(this.vaccines);
+  VaccineDetails(this.vaccines);
 
   void addVaccines(VaccineModel vaccine) {
     vaccines.add(vaccine);
@@ -18,7 +18,7 @@ class VaccineData extends ChangeNotifier {
 
 class VaccineModel {
   String vaccineName;
-  String stockCount;
+  int stockCount;
 
   VaccineModel(this.vaccineName, this.stockCount);
 }
