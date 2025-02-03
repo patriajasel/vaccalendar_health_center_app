@@ -463,12 +463,48 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Schedule Information",
-                  style: TextStyle(
-                    fontFamily: 'Hahmlet',
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Schedule Information",
+                      style: TextStyle(
+                        fontFamily: 'Hahmlet',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            iconColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        onPressed: () async {
+                          await FirebaseFirestoreServices()
+                              .deleteSchedule(scheduleID, ref);
+
+                          if (context.mounted) {
+                            showTopSnackBar(
+                                Overlay.of(context),
+                                CustomSnackBar.success(
+                                    message: "Schedule was cancelled"));
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Text("Cancel Schedule")
+                          ],
+                        ))
+                  ],
                 ),
                 Divider(
                   thickness: 2,
@@ -601,7 +637,7 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                                 vertical: screenHeight * 0.01),
                             child: Row(
                               children: [
-                                Icon(Icons.close),
+                                Icon(Icons.cancel),
                                 SizedBox(width: 3),
                                 Text("Mark as Overdue"),
                               ],

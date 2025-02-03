@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
@@ -138,6 +141,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                       3: FlexColumnWidth(1),
                       4: FlexColumnWidth(1),
                       5: FlexColumnWidth(1),
+                      6: FlexColumnWidth(1),
                     },
                     children: [
                       // Header Row
@@ -154,6 +158,7 @@ class OverallScheduleRecords extends ConsumerWidget {
                           DataTableCells().buildHeaderCell('Vaccine Type'),
                           DataTableCells().buildHeaderCell('Schedule Date'),
                           DataTableCells().buildHeaderCell('Vaccine Status'),
+                          DataTableCells().buildHeaderCell('Actions'),
                         ],
                       ),
                       // Data Rows
@@ -169,6 +174,41 @@ class OverallScheduleRecords extends ConsumerWidget {
                           ),
                           DataTableCells()
                               .buildStatusCell(schedule.schedStatus),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.01,
+                                vertical: screenHeight * 0.01),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
+                                onPressed: () async {
+                                  await FirebaseFirestoreServices()
+                                      .deleteSchedule(schedule.schedID, ref);
+
+                                  if (context.mounted) {
+                                    showTopSnackBar(
+                                        Overlay.of(context),
+                                        CustomSnackBar.success(
+                                            message: "Schedule was cancelled"));
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 3),
+                                    Text(
+                                      "Cancel Schedule",
+                                      style: TextStyle(fontFamily: 'SourGummy'),
+                                    )
+                                  ],
+                                )),
+                          )
                         ]);
                       })
                     ],

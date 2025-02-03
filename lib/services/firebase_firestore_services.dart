@@ -350,6 +350,15 @@ class FirebaseFirestoreServices {
     }
   }
 
+  Future<void> deleteSchedule(String scheduleID, WidgetRef ref) async {
+    try {
+      await schedules.doc(scheduleID).delete();
+      obtainAllSchedules(ref);
+    } catch (e) {
+      print('Error deleting schedule: $e');
+    }
+  }
+
   // Updating the schedule status
 
   Future<void> updateScheduleStatus(
