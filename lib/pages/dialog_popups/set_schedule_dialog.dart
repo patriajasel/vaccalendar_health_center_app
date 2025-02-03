@@ -374,28 +374,37 @@ class _SetScheduleDialogState extends ConsumerState<SetScheduleDialog> {
                     }
                   } else {
                     // Creating new schedule on Firestore
-                    await FirebaseFirestoreServices().setNewSchedule(
-                        ref,
-                        childIDController.text,
-                        childController.text,
-                        parentController.text,
-                        DateTime.parse(dateController.text),
-                        selectedVaccine!,
-                        schedStats);
+                    if (dateController.text.isEmpty) {
+                      if (context.mounted) {
+                        showTopSnackBar(
+                            Overlay.of(context),
+                            CustomSnackBar.error(
+                                message: "Date for the vaccination is empty!"));
+                      }
+                    } else {
+                      await FirebaseFirestoreServices().setNewSchedule(
+                          ref,
+                          childIDController.text,
+                          childController.text,
+                          parentController.text,
+                          DateTime.parse(dateController.text),
+                          selectedVaccine!,
+                          schedStats);
 
-                    await FirebaseFirestoreServices().obtainAllSchedules(ref);
+                      await FirebaseFirestoreServices().obtainAllSchedules(ref);
 
-                    if (context.mounted) {
-                      showTopSnackBar(
-                          Overlay.of(context),
-                          CustomSnackBar.info(
-                              message:
-                                  "Setting vaccination schedule success!"));
-                    }
+                      if (context.mounted) {
+                        showTopSnackBar(
+                            Overlay.of(context),
+                            CustomSnackBar.success(
+                                message:
+                                    "Setting vaccination schedule success!"));
+                      }
 
-                    if (context.mounted) {
-                      ref.read(isLoadingProvider.notifier).state = false;
-                      Navigator.pop(context); // Removing the popup window
+                      if (context.mounted) {
+                        ref.read(isLoadingProvider.notifier).state = false;
+                        Navigator.pop(context); // Removing the popup window
+                      }
                     }
                   }
                 },

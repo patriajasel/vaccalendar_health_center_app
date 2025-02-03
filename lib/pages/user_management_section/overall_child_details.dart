@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/pages/dialog_popups/view_vaccines_taken.dart';
+import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
@@ -168,6 +171,7 @@ class OverallChildDetails extends ConsumerWidget {
                       DataTableCells().buildHeaderCell('Birthdate'),
                       DataTableCells().buildHeaderCell('Birthplace'),
                       DataTableCells().buildHeaderCell('Vaccines Taken'),
+                      DataTableCells().buildHeaderCell('Actions'),
                     ],
                   ),
                   // Data Rows
@@ -203,9 +207,65 @@ class OverallChildDetails extends ConsumerWidget {
                                   Icons.visibility,
                                   color: Colors.white,
                                 ),
-                                SizedBox(width: 5),
+                                SizedBox(width: 1),
                                 Text(
                                   "View",
+                                  style: TextStyle(fontFamily: 'SourGummy'),
+                                )
+                              ],
+                            )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.01,
+                            vertical: screenHeight * 0.01),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text('Confirm Delete'),
+                                      content: Text(
+                                          "This will remove all child data for this user. Are you sure you want to continue?"),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Cancel')),
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              await FirebaseFirestoreServices()
+                                                  .deleteChildData(
+                                                      child.childID, ref);
+
+                                              if (context.mounted) {
+                                                showTopSnackBar(
+                                                    Overlay.of(context),
+                                                    CustomSnackBar.success(
+                                                        message:
+                                                            "Child data deleted successfully"));
+                                              }
+                                            },
+                                            child: Text('Confirm'))
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 1),
+                                Text(
+                                  "Delete",
                                   style: TextStyle(fontFamily: 'SourGummy'),
                                 )
                               ],

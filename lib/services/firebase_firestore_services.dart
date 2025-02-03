@@ -353,7 +353,8 @@ class FirebaseFirestoreServices {
   Future<void> deleteSchedule(String scheduleID, WidgetRef ref) async {
     try {
       await schedules.doc(scheduleID).delete();
-      obtainAllSchedules(ref);
+      await obtainAllSchedules(ref);
+      print("Schedule deleted");
     } catch (e) {
       print('Error deleting schedule: $e');
     }
@@ -542,6 +543,22 @@ class FirebaseFirestoreServices {
           .add(vaccineInfo);
     } catch (e) {
       print("Error adding new child: $e");
+    }
+  }
+
+  Future<void> deleteChildData(String childID, WidgetRef ref) async {
+    try {
+      QuerySnapshot parent = await users.get();
+
+      for (var child in parent.docs) {
+        if (childID == child.id) {
+          await child.reference.delete().then((_) async {
+            await obtainAllUsers(ref);
+          });
+        }
+      }
+    } catch (e) {
+      print("Error deleting child data: $e");
     }
   }
 

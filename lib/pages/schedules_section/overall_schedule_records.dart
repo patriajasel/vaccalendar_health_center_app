@@ -183,16 +183,37 @@ class OverallScheduleRecords extends ConsumerWidget {
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white),
                                 onPressed: () async {
-                                  await FirebaseFirestoreServices()
-                                      .deleteSchedule(schedule.schedID, ref);
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Confirm Cancel'),
+                                          content: Text(
+                                              "This will cancel the schedule. Are you sure you want to continue?"),
+                                          actions: [
+                                            ElevatedButton(
+                                                onPressed: () {},
+                                                child: Text('Cancel')),
+                                            ElevatedButton(
+                                                onPressed: () async {
+                                                  await FirebaseFirestoreServices()
+                                                      .deleteSchedule(
+                                                          schedule.schedID,
+                                                          ref);
 
-                                  if (context.mounted) {
-                                    showTopSnackBar(
-                                        Overlay.of(context),
-                                        CustomSnackBar.success(
-                                            message: "Schedule was cancelled"));
-                                    Navigator.pop(context);
-                                  }
+                                                  if (context.mounted) {
+                                                    showTopSnackBar(
+                                                        Overlay.of(context),
+                                                        CustomSnackBar.success(
+                                                            message:
+                                                                "Schedule was cancelled"));
+                                                    Navigator.pop(context);
+                                                  }
+                                                },
+                                                child: Text('Confirm'))
+                                          ],
+                                        );
+                                      });
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

@@ -481,14 +481,38 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10))),
                         onPressed: () async {
-                          await FirebaseFirestoreServices()
-                              .deleteSchedule(scheduleID, ref);
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Confirm Cancel'),
+                                  content: Text(
+                                      "This will cancel the schedule. Are you sure you want to continue?"),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Cancel')),
+                                    ElevatedButton(
+                                        onPressed: () async {
+                                          await FirebaseFirestoreServices()
+                                              .deleteSchedule(scheduleID, ref);
 
+                                          if (context.mounted) {
+                                            showTopSnackBar(
+                                                Overlay.of(context),
+                                                CustomSnackBar.success(
+                                                    message:
+                                                        "Schedule was cancelled"));
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                        child: Text('Confirm'))
+                                  ],
+                                );
+                              });
                           if (context.mounted) {
-                            showTopSnackBar(
-                                Overlay.of(context),
-                                CustomSnackBar.success(
-                                    message: "Schedule was cancelled"));
                             Navigator.pop(context);
                           }
                         },
