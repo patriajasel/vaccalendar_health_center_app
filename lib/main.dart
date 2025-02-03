@@ -6,10 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:vaccalendar_health_center_app/assets/files/firebase_options.dart';
 import 'package:vaccalendar_health_center_app/auth_check.dart';
-import 'package:vaccalendar_health_center_app/pages/app_navigation.dart';
-import 'package:vaccalendar_health_center_app/pages/dashboard.dart';
-import 'package:vaccalendar_health_center_app/pages/login_page.dart';
-import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:window_manager/window_manager.dart';
 

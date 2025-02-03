@@ -4,7 +4,6 @@ import 'package:sidebarx/sidebarx.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_page.dart';
 import 'package:vaccalendar_health_center_app/pages/user_management.dart';
-import 'package:vaccalendar_health_center_app/pages/vaccines.dart';
 import 'package:vaccalendar_health_center_app/pages/worker_management.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
@@ -103,7 +102,6 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                 SidebarXItem(icon: Icons.person, label: 'Patient\'s Data'),
                 SidebarXItem(icon: Icons.masks, label: 'Worker Management'),
                 SidebarXItem(icon: Icons.calendar_month, label: 'Schedules'),
-                SidebarXItem(icon: Icons.vaccines, label: 'Vaccines')
               ],
             ),
             Expanded(
@@ -120,8 +118,6 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                         return WorkerManagement();
                       case 3:
                         return SchedulePage();
-                      case 4:
-                        return VaccinesManagement();
                       default:
                         return Center(
                           child: Text("Exceeded the navigation"),
