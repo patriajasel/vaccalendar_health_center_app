@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:vaccalendar_health_center_app/services/excel_services.dart';
 import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
@@ -82,7 +83,10 @@ class OverallScheduleRecords extends ConsumerWidget {
                               Size(screenWidth * 0.1, screenHeight * 0.035),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {},
+                      onPressed: () async {
+                        await ExcelServices()
+                            .exportScheduleData(overallSchedules);
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,

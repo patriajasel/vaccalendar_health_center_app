@@ -5,6 +5,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/pages/dialog_popups/view_vaccines_taken.dart';
+import 'package:vaccalendar_health_center_app/services/excel_services.dart';
 import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
@@ -95,7 +96,16 @@ class OverallChildDetails extends ConsumerWidget {
                               Size(screenWidth * 0.1, screenHeight * 0.035),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {},
+                      onPressed: () async {
+                        await ExcelServices().exportChildDataToExcel(children);
+
+                        if (context.mounted) {
+                          showTopSnackBar(
+                              Overlay.of(context),
+                              CustomSnackBar.success(
+                                  message: "Exporting to Excel file success!"));
+                        }
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
