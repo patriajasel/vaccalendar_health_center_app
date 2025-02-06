@@ -16,6 +16,7 @@ class FirebaseFirestoreServices {
   final users = FirebaseFirestore.instance.collection('users');
   final schedules = FirebaseFirestore.instance.collection('schedules');
   final vaccines = FirebaseFirestore.instance.collection('vaccines');
+  final rhuSchedules = FirebaseFirestore.instance.collection('rhu_schedules');
 
   Future<void> obtainAllNeededData(WidgetRef ref) async {
     await obtainAllChildData(ref);
@@ -692,6 +693,30 @@ class FirebaseFirestoreServices {
       obtainVaccineData(ref);
     } catch (e) {
       print("Error updating vaccine storage");
+    }
+  }
+
+  //* ************** *//
+  //* END OF METHODS *//
+  //* ************** *//
+
+  //* ****************  *//
+  //* FOR RHU SCHEDULES *//
+  //* ****************  *//
+
+  Future<void> setNewRHUSchedule(String title, DateTime date, String startTime,
+      String endTime, WidgetRef ref) async {
+    try {
+      await rhuSchedules.doc().set({
+        'rhu_title': title,
+        'rhu_date': date,
+        'rhu_start_time': startTime,
+        'rhu_end_time': endTime
+      });
+
+      // !EDIT THIS
+    } catch (e) {
+      print("Error setting new RHU Schedule");
     }
   }
 
