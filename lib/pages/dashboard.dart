@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vaccalendar_health_center_app/pages/dashboard_section/dashboard_calendar.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard_section/vaccine_completion_rate.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_section/overall_schedule_records.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_section/today_schedule.dart';
@@ -22,13 +23,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.cyan.shade300, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        decoration: BoxDecoration(color: Colors.white10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,6 +56,11 @@ class _DashboardState extends ConsumerState<Dashboard> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.025,
+                          vertical: screenHeight * 0.025),
+                      child: DashboardCalendar()),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: screenWidth * 0.025,
