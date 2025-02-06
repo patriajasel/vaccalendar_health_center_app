@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
@@ -215,6 +217,16 @@ class _SetRhuScheduleState extends ConsumerState<SetRhuSchedule> {
                   timeStartController.text,
                   timeEndController.text,
                   ref);
+
+              await FirebaseFirestoreServices().obtainRhuSchedules(ref);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+                showTopSnackBar(
+                    Overlay.of(context),
+                    CustomSnackBar.success(
+                        message: "RHU Schedule set successfully"));
+              }
             },
             child: Text(
               "Set RHU Schedule",

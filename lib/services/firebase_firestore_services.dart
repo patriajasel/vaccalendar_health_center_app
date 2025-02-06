@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/child_model.dart';
+import 'package:vaccalendar_health_center_app/models/rhu_schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
@@ -23,6 +24,7 @@ class FirebaseFirestoreServices {
     await obtainAllSchedules(ref);
     await obtainAllUsers(ref);
     await obtainVaccineData(ref);
+    await obtainRhuSchedules(ref);
   }
 
   //* ***********************************  *//
@@ -704,6 +706,28 @@ class FirebaseFirestoreServices {
   //* FOR RHU SCHEDULES *//
   //* ****************  *//
 
+  Future<void> obtainRhuSchedules(WidgetRef ref) async {
+    Future.microtask(() {
+      ref.read(rhuScheduleProvider.notifier).reset();
+    });
+    try {
+      QuerySnapshot rhuScheds = await rhuSchedules.get();
+
+      for (var scheds in rhuScheds.docs) {
+        final rhuData = scheds.data() as Map<String, dynamic>;
+
+        ref.read(rhuScheduleProvider.notifier).addRhuSchedule(RhuScheduleModel(
+            scheds.id,
+            rhuData['rhu_title'],
+            (rhuData['rhu_date'] as Timestamp).toDate(),
+            rhuData['rhu_start_time'],
+            rhuData['rhu_end_time']));
+      }
+    } catch (e) {
+      print("Error getting RHU Schedules: $e");
+    }
+  }
+
   Future<void> setNewRHUSchedule(String title, DateTime date, String startTime,
       String endTime, WidgetRef ref) async {
     try {
@@ -713,10 +737,16 @@ class FirebaseFirestoreServices {
         'rhu_start_time': startTime,
         'rhu_end_time': endTime
       });
-
-      // !EDIT THIS
     } catch (e) {
       print("Error setting new RHU Schedule");
+    }
+  }
+
+  Future<void> deleteRhuSchedule(String rhuID, WidgetRef ref) async {
+    try {
+      await rhuSchedules.doc(rhuID).delete();
+    } catch (e) {
+      print('Error deleting RHU schedule: $e');
     }
   }
 
