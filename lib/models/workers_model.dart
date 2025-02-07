@@ -28,6 +28,8 @@ class WorkerModel {
   String contactNumber;
   String emailAddress;
   String position;
+  String loginCodes;
+  DateTime? whenCodeGenerated;
 
   WorkerModel(
       this.workerID,
@@ -40,5 +42,7 @@ class WorkerModel {
       this.address,
       this.contactNumber,
       this.emailAddress,
-      this.position);
+      this.position,
+      this.loginCodes,
+      this.whenCodeGenerated);
 }

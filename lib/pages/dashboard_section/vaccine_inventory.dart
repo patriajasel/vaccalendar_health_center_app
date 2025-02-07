@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -311,11 +312,18 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
                           action == 'Add' ? Colors.green : Colors.red,
                       foregroundColor: Colors.white),
                   onPressed: () async {
+                    final userID = FirebaseAuth.instance.currentUser!.uid;
                     if (action == "Add") {
                       final result = int.parse(stockNumber.text) + numberStock;
 
                       await FirebaseFirestoreServices()
                           .updateVaccineInventory(vaccineName, result, ref);
+
+                      await FirebaseFirestoreServices().addWorkerLogs(
+                          userID,
+                          'Admin',
+                          DateTime.now(),
+                          'Added ${stockNumber.text} bottles of $vaccineName vaccine to inventory');
 
                       stockNumber.clear();
 
@@ -339,6 +347,12 @@ class _VaccineInventoryState extends ConsumerState<VaccineInventory> {
 
                         await FirebaseFirestoreServices()
                             .updateVaccineInventory(vaccineName, result, ref);
+
+                        await FirebaseFirestoreServices().addWorkerLogs(
+                            userID,
+                            'Admin',
+                            DateTime.now(),
+                            'Removed ${stockNumber.text} bottles of $vaccineName vaccine from inventory');
 
                         stockNumber.clear();
 

@@ -6,6 +6,7 @@ import 'package:vaccalendar_health_center_app/pages/dashboard.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_page.dart';
 import 'package:vaccalendar_health_center_app/pages/user_management.dart';
 import 'package:vaccalendar_health_center_app/pages/worker_management.dart';
+import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class AppNavigation extends ConsumerStatefulWidget {
@@ -114,6 +115,14 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                     ref.read(userDataProvider.notifier).reset();
                     ref.read(vaccineDataProvider.notifier).reset();
                     ref.read(workerDataProvider.notifier).reset();
+
+                    final userID = FirebaseAuth.instance.currentUser!.uid;
+                    await FirebaseFirestoreServices().addWorkerLogs(
+                        userID,
+                        'Admin',
+                        DateTime.now(),
+                        'Signed out on ${DateTime.now()}');
+
                     await FirebaseAuth.instance.signOut();
                   },
                 )

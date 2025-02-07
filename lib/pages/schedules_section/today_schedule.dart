@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -496,8 +497,18 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                                         child: Text('Cancel')),
                                     ElevatedButton(
                                         onPressed: () async {
+                                          final userID = FirebaseAuth
+                                              .instance.currentUser!.uid;
+
                                           await FirebaseFirestoreServices()
                                               .deleteSchedule(scheduleID, ref);
+
+                                          await FirebaseFirestoreServices()
+                                              .addWorkerLogs(
+                                                  userID,
+                                                  'Admin',
+                                                  DateTime.now(),
+                                                  'Cancelled and remove the schedule($scheduleID)');
 
                                           if (context.mounted) {
                                             showTopSnackBar(
@@ -599,6 +610,8 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           onPressed: () async {
+                            final userID =
+                                FirebaseAuth.instance.currentUser!.uid;
                             final vaccineName = getVaccineName(vaccineType);
 
                             final vaccine = vaccineData.where((vaccine) =>
@@ -623,6 +636,19 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                               await FirebaseFirestoreServices()
                                   .updateVaccineInventory(vaccineName,
                                       vaccine.first.stockCount - 1, ref);
+
+                              await FirebaseFirestoreServices().addWorkerLogs(
+                                  userID,
+                                  'Admin',
+                                  DateTime.now(),
+                                  'Marked the schedule($scheduleID) as Finished');
+
+                              await FirebaseFirestoreServices().addWorkerLogs(
+                                  userID,
+                                  'Admin',
+                                  DateTime.now(),
+                                  'Used 1 $vaccineType vaccine bottle for $childName($childID)');
+
                               if (context.mounted) {
                                 Navigator.pop(context);
                               }
@@ -647,10 +673,19 @@ class _TodayScheduleState extends ConsumerState<TodaySchedule> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10))),
                           onPressed: () async {
+                            final userID =
+                                FirebaseAuth.instance.currentUser!.uid;
+
                             await FirebaseFirestoreServices()
                                 .updateScheduleStatus(scheduleID, 'Overdue');
                             await FirebaseFirestoreServices()
                                 .obtainAllSchedules(ref);
+
+                            await FirebaseFirestoreServices().addWorkerLogs(
+                                userID,
+                                'Admin',
+                                DateTime.now(),
+                                'Marked the schedule($scheduleID) as Overdue');
 
                             if (context.mounted) {
                               Navigator.pop(context);

@@ -22,6 +22,10 @@ class FirebaseAuthServices {
 
       if (checkAdmin == true) {
         ref.read(isLoadingProvider.notifier).state = false;
+
+        final userID = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseFirestoreServices().addWorkerLogs(
+            userID, 'Admin', DateTime.now(), 'Logged in on ${DateTime.now()}');
         if (context.mounted) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Dashboard()));
@@ -29,6 +33,10 @@ class FirebaseAuthServices {
       } else {
         ref.read(isLoadingProvider.notifier).state = false;
         await FirebaseAuth.instance.signOut();
+
+        final userID = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseFirestoreServices().addWorkerLogs(
+            userID, 'Admin', DateTime.now(), 'Logged in on ${DateTime.now()}');
         if (context.mounted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text("Invalid credentials")));

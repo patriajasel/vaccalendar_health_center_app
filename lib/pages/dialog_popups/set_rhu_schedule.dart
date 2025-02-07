@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
@@ -217,6 +219,13 @@ class _SetRhuScheduleState extends ConsumerState<SetRhuSchedule> {
                   timeStartController.text,
                   timeEndController.text,
                   ref);
+
+              final userID = FirebaseAuth.instance.currentUser!.uid;
+              await FirebaseFirestoreServices().addWorkerLogs(
+                  userID,
+                  'Admin',
+                  DateTime.now(),
+                  'Set a new RHU Schedule on ${DateFormat('MMM dd, yyyy')}');
 
               await FirebaseFirestoreServices().obtainRhuSchedules(ref);
 

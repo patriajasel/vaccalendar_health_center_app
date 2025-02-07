@@ -26,7 +26,6 @@ void main() async {
         .setMinimumSize(Size(display.size.width, display.size.height));
     WindowManager.instance.maximize();
     WindowManager.instance.setTitle("VacCalendar (Clinic)");
-    WindowManager.instance.setPosition(Offset.infinite, animate: true);
     WindowManager.instance.setResizable(false);
     WindowManager.instance.center();
   }

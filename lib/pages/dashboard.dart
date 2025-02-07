@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard_section/dashboard_calendar.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard_section/vaccine_completion_rate.dart';
-import 'package:vaccalendar_health_center_app/pages/schedules_section/overall_schedule_records.dart';
+import 'package:vaccalendar_health_center_app/pages/dashboard_section/worker_logs.dart';
 import 'package:vaccalendar_health_center_app/pages/schedules_section/today_schedule.dart';
 import 'package:vaccalendar_health_center_app/pages/dashboard_section/vaccine_inventory.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
@@ -85,7 +85,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                       padding: EdgeInsets.symmetric(
                           horizontal: screenWidth * 0.025,
                           vertical: screenHeight * 0.025),
-                      child: OverallScheduleRecords())
+                      child: WorkerLogsSection())
                 ],
               ),
             ))

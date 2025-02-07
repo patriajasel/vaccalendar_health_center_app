@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -91,6 +92,16 @@ class RhuMarkedDatesDialog extends ConsumerWidget {
                                                       await FirebaseFirestoreServices()
                                                           .obtainRhuSchedules(
                                                               ref);
+
+                                                      final userID =
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid;
+                                                      await FirebaseFirestoreServices()
+                                                          .addWorkerLogs(
+                                                              userID,
+                                                              'Admin',
+                                                              DateTime.now(),
+                                                              'Cancelled and removed RHU schedule on ${DateFormat('MMM dd, yyyy').format(schedToday![index].date)}');
                                                       if (context.mounted) {
                                                         Navigator.pop(context);
                                                       }

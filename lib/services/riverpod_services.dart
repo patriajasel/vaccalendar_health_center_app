@@ -5,6 +5,7 @@ import 'package:vaccalendar_health_center_app/models/rhu_schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
+import 'package:vaccalendar_health_center_app/models/worker_logs_model.dart';
 import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 
 final screenWidthProvider = StateProvider<double>((ref) => 0);
@@ -49,6 +50,12 @@ final rhuScheduleProvider = ChangeNotifierProvider<RhuSchedules>(
   },
 );
 
+final workerLogsProvider = ChangeNotifierProvider<WorkerLogs>(
+  (ref) {
+    return WorkerLogs([]);
+  },
+);
+
 final searchQuerySchedProvider = StateProvider<String>((ref) => '');
 final searchControllerSchedProvider = Provider((ref) {
   final controller = TextEditingController();
@@ -72,6 +79,13 @@ final searchControllerParentProvider = Provider((ref) {
 
 final searchQueryWorkerProvider = StateProvider<String>((ref) => '');
 final searchControllerWorkerProvider = Provider((ref) {
+  final controller = TextEditingController();
+  ref.onDispose(controller.dispose);
+  return controller;
+});
+
+final searchQueryLogsProvider = StateProvider<String>((ref) => '');
+final searchControllerLogsProvider = Provider((ref) {
   final controller = TextEditingController();
   ref.onDispose(controller.dispose);
   return controller;

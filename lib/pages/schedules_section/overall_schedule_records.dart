@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -86,6 +87,13 @@ class OverallScheduleRecords extends ConsumerWidget {
                       onPressed: () async {
                         await ExcelServices()
                             .exportScheduleData(overallSchedules);
+
+                        final userID = FirebaseAuth.instance.currentUser!.uid;
+                        await FirebaseFirestoreServices().addWorkerLogs(
+                            userID,
+                            'Admin',
+                            DateTime.now(),
+                            'Exported All Schedule Data to Excel');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -204,6 +212,17 @@ class OverallScheduleRecords extends ConsumerWidget {
                                                       .deleteSchedule(
                                                           schedule.schedID,
                                                           ref);
+
+                                                  final userID = FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid;
+                                                  await FirebaseFirestoreServices()
+                                                      .addWorkerLogs(
+                                                          userID,
+                                                          'Admin',
+                                                          DateTime.now(),
+                                                          'Cancelled and removed the schedule (${schedule.schedID})');
 
                                                   if (context.mounted) {
                                                     showTopSnackBar(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -98,13 +99,12 @@ class OverallChildDetails extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(15))),
                       onPressed: () async {
                         await ExcelServices().exportChildDataToExcel(children);
-
-                        if (context.mounted) {
-                          showTopSnackBar(
-                              Overlay.of(context),
-                              CustomSnackBar.success(
-                                  message: "Exporting to Excel file success!"));
-                        }
+                        final userID = FirebaseAuth.instance.currentUser!.uid;
+                        await FirebaseFirestoreServices().addWorkerLogs(
+                            userID,
+                            'Admin',
+                            DateTime.now(),
+                            'Exported All Child Data to Excel');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -252,6 +252,15 @@ class OverallChildDetails extends ConsumerWidget {
                                               await FirebaseFirestoreServices()
                                                   .deleteChildData(
                                                       child.childID, ref);
+
+                                              final userID = FirebaseAuth
+                                                  .instance.currentUser!.uid;
+                                              await FirebaseFirestoreServices()
+                                                  .addWorkerLogs(
+                                                      userID,
+                                                      'Admin',
+                                                      DateTime.now(),
+                                                      'Deleted Child Data for Child ID: ${child.childID}');
 
                                               if (context.mounted) {
                                                 showTopSnackBar(

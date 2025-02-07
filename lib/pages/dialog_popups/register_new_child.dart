@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:searchfield/searchfield.dart';
@@ -741,6 +742,13 @@ class _RegisterNewChildState extends ConsumerState<RegisterNewChild> {
                           String childID = generateChildID();
                           await FirebaseFirestoreServices().registerNewChild(
                               parentID.text, childID, controllers[data['id']]!);
+
+                          final userID = FirebaseAuth.instance.currentUser!.uid;
+                          await FirebaseFirestoreServices().addWorkerLogs(
+                              userID,
+                              'Admin',
+                              DateTime.now(),
+                              'Registered a new child($childID) to parent(${parentID.text})');
 
                           if (context.mounted) {
                             showTopSnackBar(

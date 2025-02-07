@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -392,6 +394,13 @@ class _SetScheduleDialogState extends ConsumerState<SetScheduleDialog> {
                           schedStats);
 
                       await FirebaseFirestoreServices().obtainAllSchedules(ref);
+
+                      final userID = FirebaseAuth.instance.currentUser!.uid;
+                      await FirebaseFirestoreServices().addWorkerLogs(
+                          userID,
+                          'Admin',
+                          DateTime.now(),
+                          'Set a $selectedVaccine vaccination schedule for ${childController.text}(${childIDController.text}) on ${DateFormat('MMM dd, yyyy')}');
 
                       if (context.mounted) {
                         showTopSnackBar(

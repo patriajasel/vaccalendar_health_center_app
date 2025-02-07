@@ -11,6 +11,8 @@ import 'package:vaccalendar_health_center_app/models/rhu_schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
 import 'package:vaccalendar_health_center_app/models/vaccine_model.dart';
+import 'package:vaccalendar_health_center_app/models/worker_logs_model.dart';
+import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 
 class FirebaseFirestoreServices {
@@ -18,6 +20,9 @@ class FirebaseFirestoreServices {
   final schedules = FirebaseFirestore.instance.collection('schedules');
   final vaccines = FirebaseFirestore.instance.collection('vaccines');
   final rhuSchedules = FirebaseFirestore.instance.collection('rhu_schedules');
+  final userRoles = FirebaseFirestore.instance.collection('userRoles');
+  final workers = FirebaseFirestore.instance.collection('workers');
+  final workerLogs = FirebaseFirestore.instance.collection('worker_logs');
 
   Future<void> obtainAllNeededData(WidgetRef ref) async {
     await obtainAllChildData(ref);
@@ -25,6 +30,8 @@ class FirebaseFirestoreServices {
     await obtainAllUsers(ref);
     await obtainVaccineData(ref);
     await obtainRhuSchedules(ref);
+    //await obtainWorkerData(ref); remove comment once done
+    await obtainWorkerLogs(ref);
   }
 
   //* ***********************************  *//
@@ -747,6 +754,106 @@ class FirebaseFirestoreServices {
       await rhuSchedules.doc(rhuID).delete();
     } catch (e) {
       print('Error deleting RHU schedule: $e');
+    }
+  }
+
+  //* ************** *//
+  //* END OF METHODS *//
+  //* ************** *//
+
+  //* ******************* *//
+  //* METHODS FOR WORKERS *//
+  //* ******************* *//
+
+  Future<void> obtainWorkerLogs(WidgetRef ref) async {
+    Future.microtask(() {
+      ref.read(workerLogsProvider.notifier).reset();
+    });
+
+    try {
+      QuerySnapshot workerLogQuery = await workerLogs.get();
+
+      List<WorkerLogsModel> logsList = [];
+      for (var logs in workerLogQuery.docs) {
+        final logData = logs.data() as Map<String, dynamic>;
+
+        logsList.add(WorkerLogsModel(
+          logData['worker_id'],
+          logData['worker_name'],
+          (logData['log_date'] as Timestamp).toDate(),
+          logData['log_actions'],
+        ));
+      }
+
+      // Sort the logs by date
+      logsList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+      // Add sorted logs to the provider
+      for (var log in logsList) {
+        ref.read(workerLogsProvider.notifier).addLogs(log);
+      }
+    } catch (e) {
+      print("Error getting worker logs: $e");
+    }
+  }
+
+  Future<void> addWorkerLogs(String workerId, String workerName,
+      DateTime logDate, String actions) async {
+    try {
+      await workerLogs.doc().set({
+        'worker_id': workerId,
+        'worker_name': workerName,
+        'log_date': logDate,
+        'log_actions': actions
+      });
+    } catch (e) {
+      print('Error adding worker logs: $e');
+    }
+  }
+
+  Future<void> obtainWorkerData(WidgetRef ref) async {
+    Future.microtask(() {
+      ref.read(workerDataProvider.notifier).reset();
+    });
+    try {
+      QuerySnapshot allWorkers = await workers.get();
+
+      for (var worker in allWorkers.docs) {
+        final workerData = worker.data() as Map<String, dynamic>;
+
+        final roles = await userRoles.doc(worker.id).get();
+
+        final rolesData = roles.data() as Map<String, dynamic>;
+
+        ref.read(workerDataProvider.notifier).addWorker(WorkerModel(
+            workerData['worker_id'],
+            workerData['worker_surname'],
+            workerData['worker_firstname'],
+            workerData['worker_middlename'],
+            workerData['worker_age'],
+            (workerData['worker_birthdate'] as Timestamp).toDate(),
+            workerData['worker_gender'],
+            workerData['worker_address'],
+            workerData['worker_number'],
+            workerData['worker_email'],
+            workerData['worker_position'],
+            rolesData['login_code'],
+            rolesData['time_generated']));
+      }
+    } catch (e) {
+      print('Error getting worker data: $e');
+    }
+  }
+
+  Future<void> updateCodeGenerated(
+      String workerID, String generatedCode, DateTime timeCodeGenerated) async {
+    try {
+      await userRoles.doc(workerID).update(
+          {'login_code': generatedCode, 'time_generated': timeCodeGenerated});
+
+      // Add obtaining worker data here;
+    } catch (e) {
+      print("Error updating login codes: $e");
     }
   }
 
