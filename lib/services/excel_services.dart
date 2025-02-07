@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/schedule_model.dart';
 import 'package:vaccalendar_health_center_app/models/user_data.dart';
+import 'package:vaccalendar_health_center_app/models/workers_model.dart';
 
 class ExcelServices {
   Future<void> exportChildDataToExcel(List<ChildrenData> children) async {
@@ -227,23 +228,25 @@ class ExcelServices {
       }
     }
 
-    // Encode Excel file
     List<int>? bytes = excel.encode();
     if (bytes == null) return;
 
-    // Open a file picker to select a directory
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    // Open the file picker to select the file location and name
+    String? selectedFile = await FilePicker.platform.saveFile(
+        dialogTitle: "Save Excel File",
+        fileName:
+            "Child_Data_Report_${DateFormat('MM-dd-yyyy').format(DateTime.now())}.xlsx",
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+        lockParentWindow: true);
 
-    if (selectedDirectory != null) {
-      String path =
-          "$selectedDirectory/Children_Data_${DateFormat('MM-dd-yyyy').format(DateTime.now())}.xlsx";
-
-      File file = File(path);
+    if (selectedFile != null) {
+      File file = File(selectedFile);
       await file.writeAsBytes(bytes, flush: true);
 
-      print("Excel file saved at: $path");
+      print("Excel file saved at: $selectedFile");
     } else {
-      print("No directory selected.");
+      print("No file selected.");
     }
   }
 
@@ -339,23 +342,149 @@ class ExcelServices {
       }
     }
 
-    // Encode Excel file
     List<int>? bytes = excel.encode();
     if (bytes == null) return;
 
-    // Open a file picker to select a directory
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    // Open the file picker to select the file location and name
+    String? selectedFile = await FilePicker.platform.saveFile(
+        dialogTitle: "Save Excel File",
+        fileName:
+            "Schedule_Report_${DateFormat('MM-dd-yyyy').format(DateTime.now())}.xlsx",
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+        lockParentWindow: true);
 
-    if (selectedDirectory != null) {
-      String path =
-          "$selectedDirectory/Schedule_Report_${DateFormat('MM-dd-yyyy').format(DateTime.now())}.xlsx";
-
-      File file = File(path);
+    if (selectedFile != null) {
+      File file = File(selectedFile);
       await file.writeAsBytes(bytes, flush: true);
 
-      print("Excel file saved at: $path");
+      print("Excel file saved at: $selectedFile");
     } else {
-      print("No directory selected.");
+      print("No file selected.");
+    }
+  }
+
+  Future<void> exportWorkerData(List<WorkerModel> workerModel) async {
+    var excel = Excel.createExcel();
+    Sheet sheet = excel[DateFormat('MM-dd-yyyy').format(DateTime.now())];
+
+    List<String> headers = [
+      'Worker ID',
+      'Surname',
+      'First Name',
+      'Middle Name',
+      'Age',
+      'Birthdate',
+      'Gender',
+      'Address',
+      'Contact Number',
+      'Email Address',
+      'Position',
+    ];
+
+    CellStyle headerStyle = CellStyle(
+      backgroundColorHex: ExcelColor.blue300,
+      bold: true,
+      topBorder: Border(
+          borderColorHex: ExcelColor.black, borderStyle: BorderStyle.Thin),
+      rightBorder: Border(
+          borderColorHex: ExcelColor.black, borderStyle: BorderStyle.Thin),
+      leftBorder: Border(
+          borderColorHex: ExcelColor.black, borderStyle: BorderStyle.Thin),
+      bottomBorder: Border(
+          borderColorHex: ExcelColor.black, borderStyle: BorderStyle.Thin),
+      fontSize: 10,
+      horizontalAlign: HorizontalAlign.Center,
+      fontColorHex: ExcelColor.black,
+    );
+
+    for (int i = 0; i < headers.length; i++) {
+      var cell =
+          sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+      cell.value = TextCellValue('   ${headers[i]}   ');
+      cell.cellStyle = headerStyle;
+      sheet.setRowHeight(i, 20);
+      sheet.setColumnAutoFit(i); // Auto-fit column width
+    }
+
+    CellStyle rowStyle = CellStyle(
+      backgroundColorHex: ExcelColor.white,
+      bold: false,
+      fontSize: 9,
+      horizontalAlign: HorizontalAlign.Center,
+      fontColorHex: ExcelColor.black,
+      topBorder: Border(
+          borderColorHex: ExcelColor.grey, borderStyle: BorderStyle.Thin),
+      rightBorder: Border(
+          borderColorHex: ExcelColor.grey, borderStyle: BorderStyle.Thin),
+      leftBorder: Border(
+          borderColorHex: ExcelColor.grey, borderStyle: BorderStyle.Thin),
+      bottomBorder: Border(
+          borderColorHex: ExcelColor.grey, borderStyle: BorderStyle.Thin),
+    );
+
+    for (int i = 0; i < workerModel.length; i++) {
+      WorkerModel worker = workerModel[i];
+
+      List<dynamic> rowData = [
+        worker.workerID,
+        worker.surname,
+        worker.firstname,
+        worker.middlename,
+        worker.age,
+        DateFormat('MMMM dd, yyyy').format(worker.birthdate),
+        worker.gender,
+        worker.address,
+        worker.contactNumber,
+        worker.emailAddress,
+        worker.position,
+      ];
+
+      for (int j = 0; j < rowData.length; j++) {
+        var cell = sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1));
+
+        dynamic value = rowData[j];
+
+        // Assign correct data type
+        if (value is int) {
+          cell.value = IntCellValue(value); // Store as number
+        } else if (value is double) {
+          cell.value = DoubleCellValue(value); // Store as number
+        } else if (value is DateTime) {
+          cell.value = DateTimeCellValue(
+              year: value.year,
+              month: value.month,
+              day: value.day,
+              hour: value.hour,
+              minute: value.minute); // Store as date
+        } else {
+          cell.value = TextCellValue(value.toString()); // Default to text
+        }
+
+        cell.cellStyle = rowStyle;
+      }
+    }
+
+    List<int>? bytes = excel.encode();
+    if (bytes == null) return;
+
+    // Open the file picker to select the file location and name
+    String? selectedFile = await FilePicker.platform.saveFile(
+        dialogTitle: "Save Excel File",
+        fileName:
+            "Workers_Data_Report_${DateFormat('MM-dd-yyyy').format(DateTime.now())}.xlsx",
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+        lockParentWindow: true);
+
+    if (selectedFile != null) {
+      File file = File(selectedFile);
+      await file.writeAsBytes(bytes, flush: true);
+
+      print("Excel file saved at: $selectedFile");
+    } else {
+      print("No file selected.");
     }
   }
 }

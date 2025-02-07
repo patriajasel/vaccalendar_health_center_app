@@ -1,7 +1,12 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vaccalendar_health_center_app/models/workers_model.dart';
+import 'package:vaccalendar_health_center_app/services/excel_services.dart';
+import 'package:vaccalendar_health_center_app/services/firebase_firestore_services.dart';
 import 'package:vaccalendar_health_center_app/services/riverpod_services.dart';
 import 'package:vaccalendar_health_center_app/utils/data_table_cells.dart';
 
@@ -91,7 +96,16 @@ class OverallWorkerDetails extends ConsumerWidget {
                               Size(screenWidth * 0.1, screenHeight * 0.035),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {},
+                      onPressed: () async {
+                        // await ExcelServices().exportWorkerData(workers); remove once there is already a worker registered
+
+                        final userID = FirebaseAuth.instance.currentUser!.uid;
+                        await FirebaseFirestoreServices().addWorkerLogs(
+                            userID,
+                            'Admin',
+                            DateTime.now(),
+                            'Exported All Worker Data to Excel');
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -170,6 +184,8 @@ class OverallWorkerDetails extends ConsumerWidget {
                             DataTableCells().buildHeaderCell('Contact Number'),
                             DataTableCells().buildHeaderCell('Email Address'),
                             DataTableCells().buildHeaderCell('Position'),
+                            DataTableCells().buildHeaderCell('Login Codes'),
+                            DataTableCells().buildHeaderCell('Actions'),
                           ],
                         ),
                         // Data Rows
@@ -189,7 +205,69 @@ class OverallWorkerDetails extends ConsumerWidget {
                             DataTableCells()
                                 .buildDataCell(worker.contactNumber),
                             DataTableCells().buildDataCell(worker.emailAddress),
-                            DataTableCells().buildDataCell(worker.position),
+                            DataTableCells().buildHeaderCell(worker.loginCodes),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.01,
+                                  vertical: screenHeight * 0.01),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white),
+                                  onPressed: worker.whenCodeGenerated != null &&
+                                          worker.whenCodeGenerated!.day !=
+                                              DateTime.now().day
+                                      ? () async {
+                                          String codeGenerated =
+                                              generateRandomString(8);
+
+                                          await FirebaseFirestoreServices()
+                                              .updateCodeGenerated(
+                                                  worker.workerID,
+                                                  codeGenerated,
+                                                  DateTime.now());
+
+                                          if (context.mounted) {
+                                            await showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title:
+                                                        Text('Code Generated'),
+                                                    content: Text(
+                                                      codeGenerated,
+                                                      style: TextStyle(
+                                                          fontSize: 30),
+                                                    ),
+                                                    actions: [
+                                                      ElevatedButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text('Okay'))
+                                                    ],
+                                                  );
+                                                });
+                                          }
+                                        }
+                                      : null,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.qr_code,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 3),
+                                      Text(
+                                        "Generate Code",
+                                        style:
+                                            TextStyle(fontFamily: 'SourGummy'),
+                                      )
+                                    ],
+                                  )),
+                            )
                           ]);
                         })
                       ],
@@ -209,5 +287,13 @@ class OverallWorkerDetails extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String generateRandomString(int length) {
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    Random random = Random();
+    return List.generate(length, (index) => chars[random.nextInt(chars.length)])
+        .join();
   }
 }
