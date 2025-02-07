@@ -44,3 +44,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 lib/assets/files/firebase_options.dart
+installer/VacCalendar_Health_Center.exe
+installer/VacCalendar_Health_Center.iss
